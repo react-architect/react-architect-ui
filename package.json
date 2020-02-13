@@ -1,5 +1,5 @@
 {
-  "name": "example",
+  "name": "react-architect-ui",
   "version": "0.1.0",
   "description": "",
   "main": "lib/index.js",
@@ -11,7 +11,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "@storybook/react": "^5.1.1",
