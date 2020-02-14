@@ -6,6 +6,7 @@ import * as expect from "expect";
 import styled from 'styled-components';
 
 import { UserInterface } from './UserInterface';
+import {ITheme} from "../../theme/index";
 
 const content = 'Hello World';
 
@@ -17,7 +18,14 @@ const Content = styled.div`
     border: blue 5px solid;
 `;
 
-const contentTheme = {};
+
+const contentTheme: ITheme = {
+    navbarFont: "Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif",
+    navbarFontSize: "20px",
+    navbarFontColor: "white",
+    navbarFontHover: "yellow"
+
+};
 
 storiesOf('UserInterface', module)
 

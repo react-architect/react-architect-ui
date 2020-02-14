@@ -1,6 +1,6 @@
 {
   "name": "react-architect-ui",
-  "version": "0.1.0",
+  "version": "0.0.1-alpha.3",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/src/index.d.ts",
@@ -12,7 +12,9 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "style-it": "^2.1.4"
+  },
   "devDependencies": {
     "@storybook/react": "^5.1.1",
     "@types/react": "^16.4.1",
@@ -23,6 +25,7 @@
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "expect": "^25.1.0",
+    "framer-motion": "^1.8.4",
     "json": "^9.0.6",
     "mini-css-extract-plugin": "^0.7.0",
     "postcss-loader": "^3.0.0",
@@ -33,6 +36,7 @@
     "storybook": "^1.0.0",
     "storybook-addon-specifications": "^2.1.5",
     "style-loader": "^0.23.1",
+    "style-it": "^2.1.4",
     "styled-components": "^4.4.1",
     "ts-loader": "^6.0.2",
     "typescript": "^3.5.1",

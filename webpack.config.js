@@ -3,13 +3,14 @@ const postcssPresetEnv = require('postcss-preset-env')
 const path = require('path')
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: './src/index.ts',
   output: {
     path: path.resolve(__dirname, 'lib'),
     filename: 'index.js',
     library: 'seed',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    globalObject: 'typeof self !== \'undefined\' ? self : this',
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx']
@@ -20,7 +21,15 @@ module.exports = {
       commonjs2: 'react',
       amd: 'react',
       root: 'React'
-    }
+    }, "react-dom": {
+      commonjs: 'react-dom',
+      commonjs2: 'react-dom',
+      amd: 'react-dom'
+    }, "styled-components": {
+      commonjs: 'styled-components',
+      commonjs2: 'styled-components',
+      amd: 'styled-components'
+    },
   },
   module: {
     rules: [

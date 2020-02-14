@@ -1,11 +1,14 @@
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components';
-import { ITheme } from '../../theme';
+import { ITheme }  from '../../theme';
+import styled, { css, withTheme } from 'styled-components';
 import { media } from '../UserInterface/responsive';
 import { toFullScreen, withFullScreen } from '../UserInterface/fullscreen';
 
-/** fixed height of the navbar*/
-const navBarHeight = "calc(1.2em + 20px)";
+import Style from 'style-it';
+
+/** fixed height of the navbar, depends on fontSize */
+const navBarHeight = (fontSize) => `calc(1.8 * ${fontSize})`;
+const navBarVPadding = (fontSize) => `calc(0.3 * ${fontSize})`;
 
 export const  NAVIGATION_POS = {
     LEFT: "LEFT",
@@ -23,14 +26,27 @@ export interface IRoute {
 const Wrapper = styled.div`
     min-height: 100%;
     margin-bottom: -${navBarHeight};
-    
 `;
 
+
+interface INavigationElementProps {
+    navBackground?: any
+    theme: ITheme
+}
+
+
+const navigationCommons = css<INavigationElementProps>`
+    font-family: ${props => props.theme.navbarFont};
+    font-size: ${props => props.theme.navbarFontSize};
+    ${props => props.navBackground ? props.navBackground : ""};
+`;
 
 /**
  * A styled navigation bar.
  */
-export const NavBar = withTheme(styled.div`   
+export const NavBar = styled.div<INavigationElementProps>`
+
+    ${navigationCommons};
     
     /** fixes the navbar to the top */
     position: fixed;
@@ -42,16 +58,12 @@ export const NavBar = withTheme(styled.div`
     width:100%;
     
     /** sets a fixed height that we can use when styling the content */
-    height: ${navBarHeight};
+    height: ${props => navBarHeight(props.theme.navbarFontSize)};
     
     /** make sure the navbar is in front of the content*/
     z-index: 5;
     
-    //background-color: #888;
     border-bottom: 1px solid white;
-    
-    font-family: ${props => props.theme.navbarFont};
-    font-size: ${props => props.theme.navbarFontSize};
     
     ${/*({ theme, expanded }) => expanded !== "true" ? "" : media.mobile`
         background-color: #888;
@@ -59,21 +71,22 @@ export const NavBar = withTheme(styled.div`
         display: flex;
         flex-direction: column;
     `*/""}   
-`);
-
-
-export const Footer = styled.div`
     
-    bottom: ${navBarHeight};
+`;
+
+
+export const Footer = styled.div<INavigationElementProps>`
+    
+    ${navigationCommons};
+    
+    bottom: ${props => navBarHeight(props.theme.navbarFontSize)};
     position: fixed;
     
     overflow: hidden;
-    font-family: ${props => props.theme.navbarFont};
-    font-size: ${props => props.theme.navbarFontSize};
     display: block;
     text-align: center;
     width: 100%;
-    height: ${navBarHeight};
+    height: ${props => navBarHeight(props.theme.navbarFontSize)};
     padding: 0;
     
     left: 0;
@@ -88,26 +101,23 @@ export const Footer = styled.div`
 
 /**
  * The styled content
- *
- * TODO: fullscreen?!
  */
 export const Content = styled.div`
     position: absolute;
     /** leave some space at the top for the navbar */
     margin: 0;
-    top: ${navBarHeight};
-    padding-bottom: ${navBarHeight};
+    top: ${props => navBarHeight(props.theme.navbarFontSize)};
+    padding-bottom: ${props => navBarHeight(props.theme.navbarFontSize)};
     
-    min-height: calc(100% - 2* ${navBarHeight});
+    min-height: calc(100% - 2* ${props => navBarHeight(props.theme.navbarFontSize)});
     width: 100%;
-    min-width:320px;
+    min-width: 320px;
     
     /** put the content behind the navbar (smaller z-index)*/
     z-index: 0;
     
     display: flex;
     flex-flow: column;
-    background: green;
 `;
 
 
@@ -123,45 +133,101 @@ interface INavigationProps {
     /**
      * added by withFullScreen
      */
-    fullscreen?: Boolean
+    fullscreen?: Boolean,
+
+    /**
+     * The background of the navigation-elements as styled.css`...`
+     */
+    navBackground?: any,
+
+    /**
+     * added by withTheme
+     */
+    theme: ITheme
+}
+
+const toNavBarElements = (routes, fFilter, theme) => {
+
+
+    const navClass = "nav-bar-top-class";
+    /**
+     * Styling the elements of the Nav-bar without adding another layer
+     *
+     */
+    const NavBarElement = (component, idx, position) => Style.it(`
+        .${navClass} {
+            text-decoration: none;
+            text-align: center;
+            height: 100%;
+            cursor: default;
+            display: inline-block;
+            padding: ${navBarVPadding(theme.navbarFontSize)} 15px;
+            color: ${theme.navbarFontColor};
+            float: ${position === NAVIGATION_POS.LEFT ? "left" : (position === NAVIGATION_POS.RIGHT ? "right" : "center")};
+        }
+    
+        .${navClass}:hover {
+            cursor: pointer;
+            color: ${theme.navbarFontHover};
+        }`,
+
+            React.cloneElement(
+                component,
+                Object.assign(
+                    {
+                        className: navClass,
+                        style: component.props.style
+                    },
+                    component.props,
+                )
+            )
+    );
+
+
+    /**
+     * Filter the items to appear in the top navigation bar
+     */
+    return <>{
+         routes.filter(fFilter).map((route, i) => {
+
+             /**
+              * We need to check whether the child is a valid React-element, otherwise it can't be cloned
+              */
+             if (!React.isValidElement(route.Component)) {
+                 return route.Component
+             }
+
+
+             /**
+              * We add our styling to the child provided by the user
+              */
+             return NavBarElement(
+                 route.Component,
+                 i,
+                 route.position
+             )
+
+         })
+         // here we need to provide the key to the object created by Style.it
+         .map((e,i)=> React.cloneElement(e, Object.assign({}, e.props, {key: `pos_${i}`})))
+    }</>
 }
 
 
-export const Navigation = withFullScreen(function (props: INavigationProps) {
 
-    console.log(props.fullscreen);
-    const [expanded, setExpanded] = React.useState(false);
+export const Navigation = withTheme(withFullScreen(function (props: INavigationProps) {
+
+    //console.log(props.fullscreen);
+    //const [expanded, setExpanded] = React.useState(false);
 
     return <Wrapper>
-        <NavBar>
+        <NavBar navBackground={props.navBackground}>
             {
-                /**
-                 * Filter the items to appear in the top navigation bar
-                 */
-                props.routes.filter(route => (
-                    route.position === NAVIGATION_POS.LEFT ||
-                    route.position === NAVIGATION_POS.RIGHT)
-                ).map((route, i) => {
-
-                    /**
-                     * We need to check whether the child is a valid React-element, otherwise it can't be cloned
-                     */
-                    if (!React.isValidElement(route.Component)) {
-                        return route.Component
-                    }
-
-                    /**
-                     * We add our styling to the child provided by the user
-                     */
-                    return React.cloneElement(
-                        route.Component,
-                        Object.assign({
-                            key: `NAV_${i}`
-                        }, route.Component.props, {
-                            style: Object.assign({}, route.Component.props.style)
-                        })
-                    );
-                })
+                toNavBarElements(
+                    props.routes,
+                    route => route.position === NAVIGATION_POS.LEFT ||  route.position === NAVIGATION_POS.RIGHT,
+                    props.theme
+                )
             }
         </NavBar>
         <Content>
@@ -170,36 +236,16 @@ export const Navigation = withFullScreen(function (props: INavigationProps) {
                 props.children
             }
         </Content>
-        <Footer>
+        <Footer navBackground={props.navBackground}>
             {
-                /**
-                 * Filter the items to appear in the top navigation bar
-                 */
-                props.routes.filter(route => (
-                    route.position === NAVIGATION_POS.FOOTER)
-                ).map((route, i) => {
+                toNavBarElements(
+                    props.routes,
+                    route => route.position === NAVIGATION_POS.FOOTER,
+                    props.theme
+                )
 
-                    /**
-                     * We need to check whether the child is a valid React-element, otherwise it can't be cloned
-                     */
-                    if (!React.isValidElement(route.Component)) {
-                        return route.Component
-                    }
-
-                    /**
-                     * We add our styling to the child provided by the user
-                     */
-                    return React.cloneElement(
-                        route.Component,
-                        Object.assign({
-                            key: `FOOTER_${i}`
-                        }, route.Component.props, {
-                            style: Object.assign({}, route.Component.props.style)
-                        })
-                    );
-                })
             }
         </Footer>
 
     </Wrapper>;
-});
+}));
