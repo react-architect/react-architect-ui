@@ -1,6 +1,7 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const postcssPresetEnv = require('postcss-preset-env')
-const path = require('path')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const postcssPresetEnv = require('postcss-preset-env');
+const path = require('path');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -50,10 +51,12 @@ module.exports = {
             }
           }
         ]
-      },
-      {
-        test: /\.tsx?$/,
-        use: ['ts-loader']
+      }, {
+        test: /\.(ts|js)x?$/,
+        use: [{
+            loader: 'babel-loader',
+          }, //'eslint-loader'
+        ], exclude: / node_modules/
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
@@ -75,6 +78,10 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'styles.css'
-    })
+    }),
+      /**
+       * Add linting to the build process
+       */
+
   ]
 }

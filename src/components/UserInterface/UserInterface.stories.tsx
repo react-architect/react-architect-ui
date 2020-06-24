@@ -37,8 +37,10 @@ storiesOf('UserInterface', module)
         specs(() => describe('render content', function () {
             it('should render its content', function () {
                 const output = mount(story);
-                //console.log(output)
+
                 expect(output.text()).toContain(content);
+                var x = 1
+                expect(x == 2);
             });
         }));
 

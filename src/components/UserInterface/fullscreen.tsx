@@ -1,7 +1,8 @@
 import * as React from 'react';
 
 
-export const toFullScreen = (fullscreen?: Boolean, children?: React.ReactNode): React.ReactNode => React.Children.map(children, child => {
+export const toFullScreen = (fullscreen?: Boolean, children?: React.ReactNode): React.ReactNode => (
+    React.Children.map(children, child => {
     /**
      * We need to check whether the child is a valid React-element, otherwise it can't be cloned
      */
@@ -27,7 +28,7 @@ export const toFullScreen = (fullscreen?: Boolean, children?: React.ReactNode): 
             )
         })
     );
-});
+}));
 
 
 // create empty context as default

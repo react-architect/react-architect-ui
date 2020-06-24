@@ -30,7 +30,7 @@ const Wrapper = styled.div`
 
 
 interface INavigationElementProps {
-    navBackground?: any
+    navBackground?: any,
     theme: ITheme
 }
 

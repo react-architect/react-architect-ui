@@ -1,5 +1,5 @@
-const webpackConfig = require('../webpack.config')
-const cssRule = webpackConfig.module.rules[0]
+const webpackConfig = require('../webpack.config');
+const cssRule = webpackConfig.module.rules[0];
 
 module.exports = ({ config }) => {
   config.module.rules = [
@@ -19,6 +19,17 @@ module.exports = ({ config }) => {
       'react/lib/ReactContext': 'window',
       'react/addons': true,
   }, config.externals);
+
+
+  // is not taken from default webpack... ?
+  config.node = {
+    fs: "empty",
+        module: "empty",
+        net: "empty",
+        tls: "empty",
+        child_process: "empty",
+        dns: "empty"
+  };
 
   config.resolve.extensions.push('.ts', '.tsx');
 
