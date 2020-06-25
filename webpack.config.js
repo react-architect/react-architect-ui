@@ -55,7 +55,7 @@ module.exports = {
         test: /\.(ts|js)x?$/,
         use: [{
             loader: 'babel-loader',
-          }, //'eslint-loader'
+          }
         ], exclude: / node_modules/
       },
       {
@@ -79,9 +79,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'styles.css'
     }),
-      /**
-       * Add linting to the build process
-       */
-
+    //new ForkTsCheckerWebpackPlugin()
   ]
 }
