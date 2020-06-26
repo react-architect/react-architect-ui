@@ -7,8 +7,8 @@ import { toFullScreen, withFullScreen } from "../UserInterface/fullscreen"
 import Style from "style-it"
 
 /** fixed height of the navbar, depends on fontSize */
-const navBarHeight = (fontSize) => `calc(1.8 * ${fontSize})`
-const navBarVPadding = (fontSize) => `calc(0.3 * ${fontSize})`
+const navBarHeight = (fontSize) => `calc(1.8 * ${fontSize})`;
+const navBarVPadding = (fontSize) => `calc(0.3 * ${fontSize})`;
 
 export const NAVIGATION_POS = {
   LEFT: "LEFT",
@@ -24,7 +24,7 @@ export interface IRoute {
 const Wrapper = styled.div`
   min-height: 100%;
   margin-bottom: -${navBarHeight};
-`
+`;
 
 interface INavigationElementProps {
   navBackground?: any;

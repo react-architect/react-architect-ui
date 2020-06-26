@@ -23,5 +23,6 @@
     "emitDecoratorMetadata": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "build", "scripts"]
+  "exclude": ["node_modules", "build", "scripts"],
+  "indent": [true, "spaces", 2]
 }
